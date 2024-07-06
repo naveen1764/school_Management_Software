@@ -557,7 +557,7 @@ const ResultsTable = ({ marksData, stuData }) => {
           toggle={toggleModal}
           className="modal-dialog modal-dialog-centered modal-lg"
         >
-          <ModalHeader toggle={toggleModal}>Marks Details</ModalHeader>
+          <ModalHeader toggle={toggleModal}>Marks Details </ModalHeader>
           <ModalBody className="text-center h6">
             <div className="d-flex justify-content-between">
               <div>
