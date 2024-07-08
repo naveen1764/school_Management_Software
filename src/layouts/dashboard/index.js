@@ -48,6 +48,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import XIIITSuper60 from "./xiIITSuper60";
+import XIINEETSuper60 from "./xiiNEETSuper60";
 
 const modalStyle = {
   position: "absolute",
@@ -232,7 +233,7 @@ const Dashboard = () => {
 
     const config = {
       headers: {
-        "X-Api-Key": "1feE$vlFh9ZGlpNNg$Yd-1#nJ87OFTZo1IYQ0T8ldGQimrg8#kjs2GMIwJA#0vAF",
+        "X-Api-Key": "Cd5i%aNWN2UgcGlmLUrES%VscuPM%qV#q#qTGmacNHzpD6yHmG6cMvN@T5W1sd$u",
         "Content-Type": "application/json",
       },
     };
@@ -291,7 +292,7 @@ const Dashboard = () => {
   return (
     <Fragment>
       <DashboardLayout>
-        {/* <DashboardNavbar /> */}
+        <DashboardNavbar />
         <MDBox py={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
@@ -378,18 +379,11 @@ const Dashboard = () => {
                   <XIIITSuper60 stuData={finalData} />
                 </MDBox>
               </Grid>
-              <Grid item xs={12} md={6} lg={6}>
+              <Grid item xs={12} md={12} lg={12}>
                 <MDBox mb={3}>
-                  <ReportsLineChart
-                    color="dark"
-                    title="XI - NEET Weekend (2024-25)"
-                    description={
-                      <>
-                        (<strong>+10%</strong>) increase than last month.
-                      </>
-                    }
-                    chart={tasks}
-                  />
+                  <MDBox mb={3}>
+                    <XIINEETSuper60 stuData={finalData} />
+                  </MDBox>
                 </MDBox>
               </Grid>
               <Grid item xs={12} md={6} lg={4}>
@@ -402,7 +396,6 @@ const Dashboard = () => {
                         (<strong>+32%</strong>) increase than last month.
                       </>
                     }
-                    // date="campaign sent 2 days ago"
                     chart={reportsBarChartData}
                   />
                 </MDBox>

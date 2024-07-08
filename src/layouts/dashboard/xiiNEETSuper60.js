@@ -8,12 +8,13 @@ import { Eye } from "react-feather";
 import ResultsTable from "examples/Tables/DataTable";
 import { useNavigate } from "react-router-dom";
 import "styles.css";
+import NeetResultsTable from "examples/Tables/DataTable/super60NEETIndex";
 
-const XIIITSuper60 = ({ stuData }) => {
+const XIINEETSuper60 = ({ stuData }) => {
   const history = useNavigate();
   const [weekendxi, setWeekendxi] = useState({
     labels: [],
-    datasets: { label: "MAINS", data: [] },
+    datasets: { label: "NEET", data: [] },
   });
 
   const [organizedData, setOrganizedData] = useState([]);
@@ -39,7 +40,7 @@ const XIIITSuper60 = ({ stuData }) => {
 
   useEffect(() => {
     axios
-      .get(`https://sheet.best/api/sheets/25cbcbf1-c2a1-44c7-8361-2cec8710557e`)
+      .get(`https://sheet.best/api/sheets/2be7d610-9c2b-4a1a-a9ea-bddd5be4a6fa`)
       .then((response) => {
         super60OrganizeData(response.data);
       });
@@ -52,9 +53,10 @@ const XIIITSuper60 = ({ stuData }) => {
       for (let i = 1; i <= student.ConductExams; i++) {
         weekendMarks.push({
           Date: student[`W-${i}`],
-          Mat: student[`Mat-${i}`],
           Phy: student[`Phy-${i}`],
           Che: student[`Che-${i}`],
+          Bot: student[`Bot-${i}`],
+          Zoo: student[`Zoo-${i}`],
           Tot: student[`Tot-${i}`],
         });
       }
@@ -173,11 +175,11 @@ const XIIITSuper60 = ({ stuData }) => {
   return (
     <Fragment>
       <ReportsLineChart
-        color="success"
+        color="dark"
         title={
           <div className="d-flex justify-content-between align-items-center mb-0">
             <div className="h5" style={{ textDecoration: "underline" }}>
-              XII - IIT Super60 (2024-25)
+              XII - NEET Super60 (2024-25)
             </div>
             <div>
               <select
@@ -219,7 +221,7 @@ const XIIITSuper60 = ({ stuData }) => {
             </Badge>
           </ModalHeader>
           <ModalBody className="text-center h6">
-            <ResultsTable
+            <NeetResultsTable
               marksData={selectedOption != 1 ? selFilData : finalData}
               stuData={stuData}
             />
@@ -230,8 +232,8 @@ const XIIITSuper60 = ({ stuData }) => {
   );
 };
 
-XIIITSuper60.propTypes = {
+XIINEETSuper60.propTypes = {
   stuData: PropTypes.array.isRequired,
 };
 
-export default XIIITSuper60;
+export default XIINEETSuper60;
