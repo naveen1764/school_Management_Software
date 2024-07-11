@@ -39,10 +39,29 @@ const ResultsTable = ({ marksData, stuData }) => {
   const campuses = ["All_Campuses", ...new Set(marksData.map((item) => item.Campus))];
   const [selectedSubject, setSelectedSubject] = useState("All_Subjects");
   const subjects = ["All_Subjects", "Mat", "Phy", "Che"];
+  const [selectedSection, setSelectedSection] = useState("All_Sections");
+  const [sections, setSections] = useState(["All_Sections"]);
 
   const handleCampusChange = (e) => {
-    setSelectedCampus(e.target.value);
+    const campus = e.target.value;
+    setSelectedCampus(campus);
+    setSelectedSection("All_Sections");
+    const campusSections =
+      campus === "All_Campuses"
+        ? ["All_Sections"]
+        : [
+            "All_Sections",
+            ...new Set(
+              marksData.filter((item) => item.Campus === campus).map((item) => item.Section)
+            ),
+          ];
+    setSections(campusSections);
     setCurrentPage(1); // Reset to first page when campus is changed
+  };
+
+  const handleSectionChange = (e) => {
+    setSelectedSection(e.target.value);
+    setCurrentPage(1); // Reset to first page when section is changed
   };
 
   const mentors = useMemo(() => {
@@ -68,11 +87,14 @@ const ResultsTable = ({ marksData, stuData }) => {
     if (selectedCampus !== "All_Campuses") {
       data = data.filter((item) => item.Campus === selectedCampus);
     }
+    if (selectedSection !== "All_Sections") {
+      data = data.filter((item) => item.Section === selectedSection);
+    }
     if (selectedMentor !== "All_Mentors") {
       data = data.filter((item) => item.Mentor === selectedMentor);
     }
     return data;
-  }, [marksData, selectedCampus, selectedMentor]);
+  }, [marksData, selectedCampus, selectedSection, selectedMentor]);
 
   // Compute averages and sort data
   const sortedMarksData = useMemo(() => {
@@ -258,6 +280,18 @@ const ResultsTable = ({ marksData, stuData }) => {
                 {campuses.map((campus, index) => (
                   <option key={index} value={campus}>
                     {campus}
+                  </option>
+                ))}
+              </Input>
+              <Input
+                type="select"
+                value={selectedSection}
+                onChange={handleSectionChange}
+                style={{ display: "inline", width: "auto", marginRight: "20px", fontSize: "15px" }}
+              >
+                {sections.map((section) => (
+                  <option key={section} value={section}>
+                    {section}
                   </option>
                 ))}
               </Input>

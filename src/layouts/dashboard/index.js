@@ -38,17 +38,17 @@ import { Fragment, useEffect, useState } from "react";
 import SignIn from "layouts/authentication/sign-in";
 
 import Box from "@mui/material/Box";
-import Modal from "@mui/material/Modal";
+import { Modal as MuiModal } from "@mui/material"; // Aliasing Material-UI Modal
 import Button from "@mui/material/Button";
 import Typography from "@mui/material/Typography";
-import { Col, Input, Row, Table } from "reactstrap";
+import { Col, Input, Modal, ModalBody, ModalHeader, Row, Table } from "reactstrap";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Edit, Edit2 } from "react-feather";
 import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
-import ReportsBarChart from "examples/Charts/BarCharts/ReportsBarChart";
 import XIIITSuper60 from "./xiIITSuper60";
 import XIINEETSuper60 from "./xiiNEETSuper60";
+import StaffDetails from "./staffDetails";
 
 const modalStyle = {
   position: "absolute",
@@ -82,9 +82,11 @@ const Dashboard = () => {
 
   //Set Variables
   const [isHovered, setIsHovered] = useState(false);
+  const [isStaffHovered, setIsStaffHovered] = useState(false);
   const [openStuModal, setOpenStuModal] = useState(false);
   const [openDetailModal, setOpenDetailModal] = useState(false);
   const [detailData, setDetailData] = useState([]);
+  const [staffModal, setStaffModal] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState("");
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editId, setEditId] = useState();
@@ -97,11 +99,21 @@ const Dashboard = () => {
     setIsHovered(true);
   };
 
+  const handleMouseStaffEnter = () => {
+    setIsStaffHovered(true);
+  };
+
   const handleMouseLeave = () => {
     setIsHovered(false);
   };
 
+  const handleMouseStaffLeave = () => {
+    setIsStaffHovered(false);
+  };
+
   const [apiData, setApiData] = useState([]);
+  const [staffData, setStaffData] = useState([]);
+  const finalStaffData = staffData.filter((item) => item.Status === "Active");
   const [refresh, setRefresh] = useState([]);
   const finalData = apiData && apiData.filter((ff) => ff.Sno != "" && ff.Status === "Active");
 
@@ -114,22 +126,6 @@ const Dashboard = () => {
     return acc;
   }, {});
 
-  // Convert the grouped data to an array format if needed
-  // const classWiseData = Object.keys(groupedData).map((className) => {
-  //   const students = groupedData[className];
-  //   const boysCampus = students.filter((student) => student.Campus === "Boys Campus").length;
-  //   const girlsCampus = students.filter((student) => student.Campus === "Girls Campus").length;
-  //   const dayCampus = students.filter((student) => student.Campus === "Day Campus").length;
-
-  //   return {
-  //     className,
-  //     students,
-  //     totalCount: students.length,
-  //     boysCampus,
-  //     girlsCampus,
-  //     dayCampus,
-  //   };
-  // });
   const classWiseData = Object.keys(groupedData).map((className) => {
     const students = groupedData[className];
 
@@ -203,8 +199,81 @@ const Dashboard = () => {
       });
   }, [refresh]);
 
+  useEffect(() => {
+    axios
+      .get(`https://sheet.best/api/sheets/6453ebd9-f54f-4e56-97eb-25a228f2629c`)
+      .then((response) => {
+        setStaffData(organizeStaffData(response.data));
+      });
+  }, [refresh]);
+
+  const organizeStaffData = (staffData) => {
+    return staffData.map((staff) => {
+      const {
+        SNo,
+        StaffName,
+        Status,
+        Gender,
+        DateofJoin,
+        EmpCode,
+        SchoolName,
+        CampusName,
+        Dept,
+        Desig,
+        Subject,
+        Salary,
+        ShiftIn,
+        ShiftOut,
+        ...attendance
+      } = staff;
+
+      const attObject = [];
+
+      for (const [key, value] of Object.entries(attendance)) {
+        const [type, date] = key.split("_");
+
+        let att = attObject.find((att) => att.date === date);
+
+        if (!att) {
+          att = { date };
+          attObject.push(att);
+        }
+
+        if (type === "IN") {
+          att.in = value;
+        } else if (type === "OUT") {
+          att.out = value;
+        } else if (type === "Remark") {
+          att.remark = value;
+        }
+      }
+
+      return {
+        SNo,
+        StaffName,
+        Status,
+        Gender,
+        DateofJoin,
+        EmpCode,
+        SchoolName,
+        CampusName,
+        Dept,
+        Desig,
+        Subject,
+        Salary,
+        ShiftIn,
+        ShiftOut,
+        attObject,
+      };
+    });
+  };
+
   const handleOpen = () => setOpenStuModal(true);
   const handleClose = () => setOpenStuModal(false);
+
+  const handleStaffOpen = () => {
+    setStaffModal(!staffModal);
+  };
 
   const handleOpenDetail = (students, title) => {
     setDetailData(students);
@@ -292,7 +361,7 @@ const Dashboard = () => {
   return (
     <Fragment>
       <DashboardLayout>
-        <DashboardNavbar />
+        {/* <DashboardNavbar /> */}
         <MDBox py={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>
@@ -330,13 +399,31 @@ const Dashboard = () => {
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  icon="wc"
+                  color="dark"
+                  icon="groups"
                   title="Staff Count"
-                  count="200"
+                  count={
+                    staffData.length > 0 ? (
+                      <div
+                        style={{
+                          textDecoration: isStaffHovered ? "underline" : "none",
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                        onMouseEnter={handleMouseStaffEnter}
+                        onMouseLeave={handleMouseStaffLeave}
+                        onClick={handleStaffOpen}
+                      >
+                        {finalStaffData.length}
+                      </div>
+                    ) : (
+                      <ClipLoader color="#36d7b7" />
+                    )
+                  }
                   percentage={{
                     color: "success",
-                    amount: "+3%",
-                    label: "than last month",
+                    amount: "",
+                    label: "Last Updated on @10.07.2024",
                   }}
                 />
               </MDBox>
@@ -386,7 +473,7 @@ const Dashboard = () => {
                   </MDBox>
                 </MDBox>
               </Grid>
-              <Grid item xs={12} md={6} lg={4}>
+              <Grid item xs={12} md={12} lg={12}>
                 <MDBox mb={3}>
                   <ReportsLineChart
                     color="info"
@@ -409,7 +496,7 @@ const Dashboard = () => {
           </MDBox>
         </MDBox>
       </DashboardLayout>
-      <Modal
+      <MuiModal
         open={openStuModal}
         onClose={handleClose}
         aria-labelledby="custom-modal-title"
@@ -667,9 +754,9 @@ const Dashboard = () => {
             </div>
           </div>
         </Box>
-      </Modal>
+      </MuiModal>
 
-      <Modal
+      <MuiModal
         open={openDetailModal}
         onClose={handleCloseDetail}
         aria-labelledby="detail-modal-title"
@@ -745,9 +832,9 @@ const Dashboard = () => {
             </div>
           </div>
         </Box>
-      </Modal>
+      </MuiModal>
       {editId && (
-        <Modal
+        <MuiModal
           open={openEditModal}
           onClose={handleCloseEditDtl}
           aria-labelledby="detail-modal-title"
@@ -938,8 +1025,21 @@ const Dashboard = () => {
               </button>
             </div>
           </Box>
-        </Modal>
+        </MuiModal>
       )}
+
+      <>
+        <Modal
+          className="modal-dialog modal-dialog-centered modal-xxl"
+          isOpen={staffModal}
+          toggle={handleStaffOpen}
+        >
+          <ModalHeader toggle={handleStaffOpen}> Staff Details </ModalHeader>
+          <ModalBody className="h6">
+            <StaffDetails staffData={finalStaffData} />
+          </ModalBody>
+        </Modal>
+      </>
     </Fragment>
   );
 };

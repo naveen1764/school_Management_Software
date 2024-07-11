@@ -39,10 +39,29 @@ const NeetResultsTable = ({ marksData, stuData }) => {
   const campuses = ["All_Campuses", ...new Set(marksData.map((item) => item.Campus))];
   const [selectedSubject, setSelectedSubject] = useState("All_Subjects");
   const subjects = ["All_Subjects", "Phy", "Che", "Bot", "Zoo"];
+  const [selectedSection, setSelectedSection] = useState("All_Sections");
+  const [sections, setSections] = useState(["All_Sections"]);
 
   const handleCampusChange = (e) => {
-    setSelectedCampus(e.target.value);
+    const campus = e.target.value;
+    setSelectedCampus(campus);
+    setSelectedSection("All_Sections");
+    const campusSections =
+      campus === "All_Campuses"
+        ? ["All_Sections"]
+        : [
+            "All_Sections",
+            ...new Set(
+              marksData.filter((item) => item.Campus === campus).map((item) => item.Section)
+            ),
+          ];
+    setSections(campusSections);
     setCurrentPage(1); // Reset to first page when campus is changed
+  };
+
+  const handleSectionChange = (e) => {
+    setSelectedSection(e.target.value);
+    setCurrentPage(1); // Reset to first page when section is changed
   };
 
   const mentors = useMemo(() => {
@@ -276,6 +295,18 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                 {campuses.map((campus, index) => (
                   <option key={index} value={campus}>
                     {campus}
+                  </option>
+                ))}
+              </Input>
+              <Input
+                type="select"
+                value={selectedSection}
+                onChange={handleSectionChange}
+                style={{ display: "inline", width: "auto", marginRight: "20px", fontSize: "15px" }}
+              >
+                {sections.map((section) => (
+                  <option key={section} value={section}>
+                    {section}
                   </option>
                 ))}
               </Input>
