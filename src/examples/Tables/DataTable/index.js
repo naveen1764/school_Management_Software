@@ -351,7 +351,7 @@ const ResultsTable = ({ marksData, stuData }) => {
         </div>
       </div>
       <Card>
-        <CardBody className="small mb-0">
+        <CardBody className="small mb-0 text-center">
           <div ref={printableTableRef}>
             <Table responsive striped bordered hover>
               {/* <thead>
@@ -491,7 +491,7 @@ const ResultsTable = ({ marksData, stuData }) => {
                     <td>{index + 1 + (currentPage - 1) * recordsPerPage}</td>
                     <td
                       className="text-primary"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", textAlign: "left" }}
                       onClick={() => handleStudentDetails(item)}
                     >
                       {item.StudentName}
@@ -533,8 +533,8 @@ const ResultsTable = ({ marksData, stuData }) => {
                     <td className="text-primary">
                       <b>{item.averages.Che}</b>
                     </td>
-                    <td className="text-danger">
-                      <b>{item.averages.Tot}</b>
+                    <td className="text-danger h6">
+                      <b className>{item.averages.Tot}</b>
                     </td>
                   </tr>
                 ))}
@@ -711,14 +711,6 @@ const ResultsTable = ({ marksData, stuData }) => {
               </tfoot>
             </Table>
           </ModalBody>
-          {/* <ModalFooter>
-            <Button color="success" size="sm">
-              <Printer size={15} /> Print
-            </Button>
-            <Button color="danger" size="sm" onClick={toggleModal}>
-              X Close
-            </Button>
-          </ModalFooter> */}
         </Modal>
       )}
     </Fragment>

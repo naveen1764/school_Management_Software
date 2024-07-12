@@ -366,7 +366,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
         </div>
       </div>
       <Card>
-        <CardBody className="small mb-0">
+        <CardBody className="small mb-0 text-center">
           <div ref={printableTableRef}>
             <Table responsive striped bordered hover>
               {/* <thead>
@@ -508,7 +508,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                     <td>{index + 1 + (currentPage - 1) * recordsPerPage}</td>
                     <td
                       className="text-primary"
-                      style={{ cursor: "pointer" }}
+                      style={{ cursor: "pointer", textAlign: "left" }}
                       onClick={() => handleStudentDetails(item)}
                     >
                       {item.StudentName}
@@ -554,7 +554,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                     <td className="text-primary">
                       <b>{item.averages.Zoo}</b>
                     </td>
-                    <td className="text-danger">
+                    <td className="text-danger h6">
                       <b>{item.averages.Tot}</b>
                     </td>
                   </tr>

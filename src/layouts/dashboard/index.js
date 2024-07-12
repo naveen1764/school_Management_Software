@@ -65,7 +65,7 @@ const modalStyle = {
 };
 
 const tableContainerStyle = {
-  maxHeight: "400px",
+  maxHeight: "720px",
   overflowY: "auto",
   marginTop: "20px",
 };
@@ -788,7 +788,7 @@ const Dashboard = () => {
                 <thead style={tableHeaderStyle}>
                   <tr>
                     <th>S.No</th>
-                    <th style={{ width: "250px" }}>Student Name</th>
+                    <th style={{ width: "380px" }}>Student Name</th>
                     <th>Roll No</th>
                     <th>Stream</th>
                     <th>Class</th>
@@ -803,7 +803,10 @@ const Dashboard = () => {
                   {filteredData.map((student, index) => (
                     <tr key={index}>
                       <th scope="row">{index + 1}</th>
-                      <td>{student.StudentName}</td>
+                      <td style={{ textAlign: "left" }}>
+                        {" "}
+                        <b>{student.StudentName}</b>
+                      </td>
                       <td>{student.RollNo}</td>
                       <td>{student.Stream}</td>
                       <td>{student.Class}</td>

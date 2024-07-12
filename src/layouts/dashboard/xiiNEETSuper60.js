@@ -211,7 +211,7 @@ const XIINEETSuper60 = ({ stuData }) => {
           toggle={() => setResultOpenModal(false)}
         >
           <ModalHeader toggle={() => setResultOpenModal(false)}>
-            XII - Super 60 (IIT) JEE-MAINS Model -{" "}
+            XII - Super 60 (NEET) NEET Model -{" "}
             <Badge color="danger">
               {" "}
               {selOptions.find((ff) => ff.value === selectedOption)
@@ -220,7 +220,7 @@ const XIINEETSuper60 = ({ stuData }) => {
               - Results
             </Badge>
           </ModalHeader>
-          <ModalBody className="text-center h6">
+          <ModalBody className="h6">
             <NeetResultsTable
               marksData={selectedOption != 1 ? selFilData : finalData}
               stuData={stuData}

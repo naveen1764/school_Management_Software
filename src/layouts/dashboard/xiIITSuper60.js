@@ -218,7 +218,7 @@ const XIIITSuper60 = ({ stuData }) => {
               - Results
             </Badge>
           </ModalHeader>
-          <ModalBody className="text-center h6">
+          <ModalBody className="h6">
             <ResultsTable
               marksData={selectedOption != 1 ? selFilData : finalData}
               stuData={stuData}

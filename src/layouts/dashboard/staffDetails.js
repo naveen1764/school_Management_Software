@@ -16,10 +16,12 @@ import {
 import { useReactToPrint } from "react-to-print";
 import { ArrowRightCircle, DollarSign, Eye } from "react-feather";
 import IndividualStaffData from "./indvdualStaffData";
+import * as XLSX from "xlsx";
 
 const StaffDetails = ({ staffData }) => {
   const [filteredStaffData, setFilteredStaffData] = useState(staffData);
 
+  const [searchTerm, setSearchTerm] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("All_School");
   const [selectedCampus, setSelectedCampus] = useState("All_Campuses");
   const [selectedDept, setSelectedDept] = useState("All_Dept");
@@ -51,6 +53,20 @@ const StaffDetails = ({ staffData }) => {
     if (selectedGender !== "All_Genders") {
       filteredData = filteredData.filter((item) => item.Gender === selectedGender);
     }
+    if (searchTerm) {
+      filteredData = filteredData.filter((item) => {
+        return (
+          item.StaffName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.EmpCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.DateofJoin.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.SchoolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.CampusName.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.Dept.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.Desig.toLowerCase().includes(searchTerm.toLowerCase()) ||
+          item.Subject.toLowerCase().includes(searchTerm.toLowerCase())
+        );
+      });
+    }
 
     setFilteredStaffData(filteredData);
   }, [
@@ -61,6 +77,7 @@ const StaffDetails = ({ staffData }) => {
     selectedSubject,
     staffData,
     selectedGender,
+    searchTerm,
   ]);
 
   const handlePrint = useReactToPrint({
@@ -89,12 +106,25 @@ const StaffDetails = ({ staffData }) => {
     }
   };
 
+  const exportToExcel = () => {
+    const table = document.getElementById("tbl1");
+    const ws = XLSX.utils.table_to_sheet(table);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Sheet1");
+    XLSX.writeFile(wb, "Staff_Details.xlsx");
+  };
+
   return (
     <Fragment>
       <div className="d-flex justify-content-between mb-2">
         <div>
           <div>
-            <Button color="primary" size="sm" style={{ marginRight: "5px", borderRadius: "5px" }}>
+            <Button
+              color="primary"
+              size="sm"
+              style={{ marginRight: "5px", borderRadius: "5px" }}
+              onClick={exportToExcel}
+            >
               <span className="text-white">Excel Export</span>
             </Button>
             <Button
@@ -108,6 +138,13 @@ const StaffDetails = ({ staffData }) => {
           </div>
         </div>
         <div className="d-flex mb-1 justify-content-right">
+          <Input
+            style={{ display: "inline", width: "auto", marginRight: "10px", fontSize: "15px" }}
+            type="text"
+            placeholder="Search........"
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+          />
           <Input
             style={{ display: "inline", width: "auto", marginRight: "10px", fontSize: "15px" }}
             type="select"
@@ -200,7 +237,7 @@ const StaffDetails = ({ staffData }) => {
           </Button>
         </div>
       </div>
-      <div ref={printableTableRef}>
+      <div ref={printableTableRef} id="tbl1">
         <Table bordered responsive hover striped className="align-items-center text-center">
           <thead>
             <tr>
