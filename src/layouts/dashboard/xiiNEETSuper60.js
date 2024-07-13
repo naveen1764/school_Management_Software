@@ -19,12 +19,13 @@ const XIINEETSuper60 = ({ stuData }) => {
 
   const [organizedData, setOrganizedData] = useState([]);
   const [finalData, setFinalData] = useState([]);
-  const [selectedOption, setSelectedOption] = useState(1);
+  const [selectedOption, setSelectedOption] = useState(0);
   const [selFilData, setSelFilData] = useState();
   const [resultOpenModal, setResultOpenModal] = useState(false);
 
   const selOptions = [
-    { value: 1, label: "Overall" },
+    { value: 0, label: "Overall" },
+    { value: 1, label: "Latest 1 Week" },
     { value: 2, label: "Latest 2 Weeks" },
     { value: 3, label: "Latest 3 Weeks" },
     { value: 4, label: "Latest 4 Weeks" },
@@ -34,6 +35,10 @@ const XIINEETSuper60 = ({ stuData }) => {
     { value: 8, label: "Latest 8 Weeks" },
     { value: 9, label: "Latest 9 Weeks" },
     { value: 10, label: "Latest 10 Weeks" },
+    { value: 11, label: "Latest 11 Weeks" },
+    { value: 12, label: "Latest 12 Weeks" },
+    { value: 13, label: "Latest 13 Weeks" },
+    { value: 14, label: "Latest 14 Weeks" },
     { value: 15, label: "Latest 15 Weeks" },
     { value: 20, label: "Latest 20 Weeks" },
   ];
@@ -95,52 +100,33 @@ const XIINEETSuper60 = ({ stuData }) => {
     let labels = [];
     let datasetsData = {};
 
-    if (selectedOption === 1) {
-      // Overall means no need to filter
-      data.forEach((student) => {
-        student.WeekendMarks.forEach((weekendMark) => {
-          const date = weekendMark.Date;
-          const tot = weekendMark.Tot;
-          if (tot !== "A") {
-            const totValue = parseInt(tot);
-            if (!labels.includes(date)) {
-              labels.push(date);
-              datasetsData[date] = totValue;
-            } else {
-              datasetsData[date] = Math.max(datasetsData[date], totValue);
-            }
-          }
-        });
-      });
-    } else {
-      // Filter based on selectedOption (latest 2, 3, 5, 10 weeks)
-      const numberOfWeeks = parseInt(selectedOption);
-      data.forEach((student) => {
-        const weekendMarks = student.WeekendMarks.slice(-numberOfWeeks);
-        weekendMarks.forEach((weekendMark) => {
-          const date = weekendMark.Date;
-          const tot = weekendMark.Tot;
-          if (tot !== "A") {
-            const totValue = parseInt(tot);
-            if (!labels.includes(date)) {
-              labels.push(date);
-              datasetsData[date] = totValue;
-            } else {
-              datasetsData[date] = Math.max(datasetsData[date], totValue);
-            }
-          }
-        });
-      });
-    }
+    const numberOfWeeks = selectedOption === 0 ? undefined : parseInt(selectedOption);
 
-    // Sort labels based on date
+    data.forEach((student) => {
+      const weekendMarks = numberOfWeeks
+        ? student.WeekendMarks.slice(-numberOfWeeks)
+        : student.WeekendMarks;
+
+      weekendMarks.forEach((weekendMark) => {
+        const { Date: date, Tot: tot } = weekendMark;
+        if (tot !== "A") {
+          const totValue = parseInt(tot);
+          if (!labels.includes(date)) {
+            labels.push(date);
+            datasetsData[date] = totValue;
+          } else {
+            datasetsData[date] = Math.max(datasetsData[date], totValue);
+          }
+        }
+      });
+    });
+
     labels.sort(
       (a, b) =>
         new Date(a.split(".").reverse().join("-")) - new Date(b.split(".").reverse().join("-"))
     );
 
-    // Prepare the dataset array in the correct order
-    let sortedDatasetData = labels.map((date) => datasetsData[date]);
+    const sortedDatasetData = labels.map((date) => datasetsData[date]);
 
     setWeekendxi({
       labels,
@@ -153,7 +139,7 @@ const XIINEETSuper60 = ({ stuData }) => {
   };
 
   useEffect(() => {
-    if (selectedOption === 1) {
+    if (selectedOption === 0) {
       setSelFilData(finalData);
     } else {
       const numberOfWeeks = parseInt(selectedOption);
@@ -178,9 +164,7 @@ const XIINEETSuper60 = ({ stuData }) => {
         color="dark"
         title={
           <div className="d-flex justify-content-between align-items-center mb-0">
-            <div className="h5" style={{ textDecoration: "underline" }}>
-              XII - NEET Super60 (2024-25)
-            </div>
+            <div className="h5">XII - NEET Super60 (2024-25)</div>
             <div>
               <select
                 id="selectOptions"
@@ -222,7 +206,7 @@ const XIINEETSuper60 = ({ stuData }) => {
           </ModalHeader>
           <ModalBody className="h6">
             <NeetResultsTable
-              marksData={selectedOption != 1 ? selFilData : finalData}
+              marksData={selectedOption != 0 ? selFilData : finalData}
               stuData={stuData}
             />
           </ModalBody>

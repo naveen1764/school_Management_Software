@@ -41,6 +41,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
   const subjects = ["All_Subjects", "Phy", "Che", "Bot", "Zoo"];
   const [selectedSection, setSelectedSection] = useState("All_Sections");
   const [sections, setSections] = useState(["All_Sections"]);
+  const [searchInput, setSearchInput] = useState("");
 
   const handleCampusChange = (e) => {
     const campus = e.target.value;
@@ -90,8 +91,15 @@ const NeetResultsTable = ({ marksData, stuData }) => {
     if (selectedMentor !== "All_Mentors") {
       data = data.filter((item) => item.Mentor === selectedMentor);
     }
+    if (searchInput) {
+      data = data.filter(
+        (item) =>
+          item.StudentName.toLowerCase().includes(searchInput.toLowerCase()) ||
+          item.RollNo.toLowerCase().includes(searchInput.toLowerCase())
+      );
+    }
     return data;
-  }, [marksData, selectedCampus, selectedMentor]);
+  }, [marksData, selectedCampus, selectedMentor, searchInput]);
 
   // Compute averages and sort data
   const sortedMarksData = useMemo(() => {
@@ -107,23 +115,38 @@ const NeetResultsTable = ({ marksData, stuData }) => {
 
   // Function to calculate averages
   function calculateAverages(marks) {
-    const totals = { Phy: 0, Che: 0, Bot: 0, Zoo: 0, Tot: 0, count: 0 };
+    const totals = { Phy: 0, Che: 0, Bot: 0, Zoo: 0, Tot: 0 };
+    const counts = { Phy: 0, Che: 0, Bot: 0, Zoo: 0, Tot: 0 };
 
     marks.forEach((mark) => {
-      totals.Phy += parseInt(mark.Phy, 10) || 0;
-      totals.Che += parseInt(mark.Che, 10) || 0;
-      totals.Bot += parseInt(mark.Bot, 10) || 0;
-      totals.Zoo += parseInt(mark.Zoo, 10) || 0;
-      totals.Tot += parseInt(mark.Tot, 10) || 0;
-      totals.count += 1;
+      if (mark.Phy !== "A") {
+        totals.Phy += parseInt(mark.Phy, 10);
+        counts.Phy += 1;
+      }
+      if (mark.Che !== "A") {
+        totals.Che += parseInt(mark.Che, 10);
+        counts.Che += 1;
+      }
+      if (mark.Bot !== "A") {
+        totals.Bot += parseInt(mark.Bot, 10);
+        counts.Bot += 1;
+      }
+      if (mark.Zoo !== "A") {
+        totals.Zoo += parseInt(mark.Zoo, 10);
+        counts.Zoo += 1;
+      }
+      if (mark.Tot !== "A") {
+        totals.Tot += parseInt(mark.Tot, 10);
+        counts.Tot += 1;
+      }
     });
 
     return {
-      Phy: (totals.Phy / totals.count).toFixed(2),
-      Che: (totals.Che / totals.count).toFixed(2),
-      Bot: (totals.Bot / totals.count).toFixed(2),
-      Zoo: (totals.Zoo / totals.count).toFixed(2),
-      Tot: (totals.Tot / totals.count).toFixed(2),
+      Phy: counts.Phy ? (totals.Phy / counts.Phy).toFixed(2) : "N/A",
+      Che: counts.Che ? (totals.Che / counts.Che).toFixed(2) : "N/A",
+      Bot: counts.Bot ? (totals.Bot / counts.Bot).toFixed(2) : "N/A",
+      Zoo: counts.Zoo ? (totals.Zoo / counts.Zoo).toFixed(2) : "N/A",
+      Tot: counts.Tot ? (totals.Tot / counts.Tot).toFixed(2) : "N/A",
     };
   }
 
@@ -239,22 +262,39 @@ const NeetResultsTable = ({ marksData, stuData }) => {
     setSelectedStudent(student);
 
     const totals = { Phy: 0, Che: 0, Bot: 0, Zoo: 0, Tot: 0 };
+    let count = 0;
+
     student.WeekendMarks.forEach((mark) => {
-      totals.Phy += parseInt(mark.Phy, 10) || 0;
-      totals.Che += parseInt(mark.Che, 10) || 0;
-      totals.Bot += parseInt(mark.Bot, 10) || 0;
-      totals.Zoo += parseInt(mark.Zoo, 10) || 0;
-      totals.Tot += parseInt(mark.Tot, 10) || 0;
+      if (mark.Phy !== "A") {
+        totals.Phy += parseInt(mark.Phy, 10) || 0;
+        count++;
+      }
+      if (mark.Che !== "A") {
+        totals.Che += parseInt(mark.Che, 10) || 0;
+      }
+      if (mark.Bot !== "A") {
+        totals.Bot += parseInt(mark.Bot, 10) || 0;
+      }
+      if (mark.Zoo !== "A") {
+        totals.Zoo += parseInt(mark.Zoo, 10) || 0;
+      }
+      if (mark.Tot !== "A") {
+        totals.Tot += parseInt(mark.Tot, 10) || 0;
+      }
     });
 
-    const count = student.WeekendMarks.length;
+    const averagePhy = count ? (totals.Phy / count).toFixed(2) : "N/A";
+    const averageChe = count ? (totals.Che / count).toFixed(2) : "N/A";
+    const averageBot = count ? (totals.Bot / count).toFixed(2) : "N/A";
+    const averageZoo = count ? (totals.Zoo / count).toFixed(2) : "N/A";
+    const averageTot = count ? (totals.Tot / count).toFixed(2) : "N/A";
 
     setStudentAverages({
-      Phy: (totals.Phy / count).toFixed(2),
-      Che: (totals.Che / count).toFixed(2),
-      Bot: (totals.Bot / count).toFixed(2),
-      Zoo: (totals.Zoo / count).toFixed(2),
-      Tot: (totals.Tot / count).toFixed(2),
+      Phy: averagePhy,
+      Che: averageChe,
+      Bot: averageBot,
+      Zoo: averageZoo,
+      Tot: averageTot,
     });
 
     toggleModal();
@@ -286,6 +326,14 @@ const NeetResultsTable = ({ marksData, stuData }) => {
         <div className="mb-1 justify-content-right">
           <Row>
             <Col>
+              <Input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search Student...."
+                aria-label="Search Student Name"
+                style={{ display: "inline", width: "auto", marginRight: "20px", fontSize: "15px" }}
+              />
               <Input
                 type="select"
                 value={selectedCampus}
@@ -369,86 +417,6 @@ const NeetResultsTable = ({ marksData, stuData }) => {
         <CardBody className="small mb-0 text-center">
           <div ref={printableTableRef}>
             <Table responsive striped bordered hover>
-              {/* <thead>
-                <tr>
-                  <th rowSpan={2}>S.No</th>
-                  <th rowSpan={2}>Name of the Student</th>
-                  <th rowSpan={2}>Roll No</th>
-                  <th rowSpan={2}>Caste</th>
-                  <th rowSpan={2}>Campus</th>
-                  <th rowSpan={2}>Mentor</th>
-                  {viewMode === "all" &&
-                    allDates.map((date, index) => (
-                      <th key={index} colSpan={4} className="text-danger">
-                        {date}
-                      </th>
-                    ))}
-                  {viewMode === "totals" &&
-                    allDates.map((date, index) => <th key={index}>{date.slice(0, 5)}</th>)}
-                  <th colSpan={4}>Averages</th>
-                </tr>
-                <tr>
-                  {viewMode === "all" &&
-                    allDates.map((date, index) => (
-                      <Fragment key={index}>
-                        <th>Mat</th>
-                        <th>Phy</th>
-                        <th>Che</th>
-                        <th>Tot</th>
-                      </Fragment>
-                    ))}
-                  {viewMode === "totals" && allDates.map((date, index) => <th key={index}>Tot</th>)}
-                  {(viewMode === "all" || viewMode === "totals" || viewMode === "averages") && (
-                    <Fragment>
-                      <th>Mat</th>
-                      <th>Phy</th>
-                      <th>Che</th>
-                      <th>Tot</th>
-                    </Fragment>
-                  )}
-                </tr>
-              </thead> */}
-              {/* <tbody>
-                {paginatedData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1 + (currentPage - 1) * recordsPerPage}</td>
-                    <td className="justify-content-left">{item.StudentName}</td>
-                    <td>{item.RollNo}</td>
-                    <td>{item.Caste}</td>
-                    <td>{item.Campus}</td>
-                    <td>{item.Mentor}</td>
-                    {viewMode === "all" &&
-                      allDates.map((date, dateIndex) => {
-                        const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return (
-                          <Fragment key={dateIndex}>
-                            <td style={{ borderLeft: "2px solid black" }}>{marks.Mat || "-"}</td>
-                            <td>{marks.Phy || "-"}</td>
-                            <td>{marks.Che || "-"}</td>
-                            <td style={{ borderRight: "2px solid black" }}>{marks.Tot || "-"}</td>
-                          </Fragment>
-                        );
-                      })}
-                    {viewMode === "totals" &&
-                      allDates.map((date, dateIndex) => {
-                        const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return <td key={dateIndex}>{marks.Tot || "-"}</td>;
-                      })}
-                    <td className="text-primary">
-                      <b>{item.averages.Mat}</b>
-                    </td>
-                    <td className="text-primary">
-                      <b>{item.averages.Phy}</b>
-                    </td>
-                    <td className="text-primary">
-                      <b>{item.averages.Che}</b>
-                    </td>
-                    <td className="text-danger">
-                      <b>{item.averages.Tot}</b>
-                    </td>
-                  </tr>
-                ))}
-              </tbody> */}
               <thead>
                 <tr>
                   <th rowSpan={2}>S.No</th>
@@ -460,7 +428,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                   {viewMode === "all" &&
                     selectedSubject === "All_Subjects" &&
                     allDates.map((date, index) => (
-                      <th key={index} colSpan={4} className="text-danger">
+                      <th key={index} colSpan={5} className="text-danger">
                         {date}
                       </th>
                     ))}
@@ -473,7 +441,7 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                     ))}
                   {viewMode === "totals" &&
                     allDates.map((date, index) => <th key={index}>{date.slice(0, 5)}</th>)}
-                  <th colSpan={4}>Averages</th>
+                  <th colSpan={5}>Averages</th>
                 </tr>
                 <tr>
                   {viewMode === "all" &&
@@ -523,11 +491,27 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                         const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
                         return (
                           <Fragment key={dateIndex}>
-                            <td style={{ borderLeft: "2px solid black" }}>{marks.Phy || "-"}</td>
-                            <td>{marks.Che || "-"}</td>
-                            <td>{marks.Bot || "-"}</td>
-                            <td>{marks.Zoo || "-"}</td>
-                            <td style={{ borderRight: "2px solid black" }}>{marks.Tot || "-"}</td>
+                            <td
+                              style={{ borderLeft: "2px solid black" }}
+                              className={marks.Phy === "A" ? "bg-warning" : ""}
+                            >
+                              {marks.Phy || "-"}
+                            </td>
+                            <td className={marks.Che === "A" ? "bg-warning" : ""}>
+                              {marks.Che || "-"}
+                            </td>
+                            <td className={marks.Bot === "A" ? "bg-warning" : ""}>
+                              {marks.Bot || "-"}
+                            </td>
+                            <td className={marks.Zoo === "A" ? "bg-warning" : ""}>
+                              {marks.Zoo || "-"}
+                            </td>
+                            <td
+                              style={{ borderRight: "2px solid black" }}
+                              className={marks.Tot === "A" ? "bg-warning" : ""}
+                            >
+                              {marks.Tot || "-"}
+                            </td>
                           </Fragment>
                         );
                       })}
@@ -540,7 +524,11 @@ const NeetResultsTable = ({ marksData, stuData }) => {
                     {viewMode === "totals" &&
                       allDates.map((date, dateIndex) => {
                         const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return <td key={dateIndex}>{marks.Tot || "-"}</td>;
+                        return (
+                          <td key={dateIndex} className={marks.Tot === "A" ? "bg-warning" : ""}>
+                            {marks.Tot || "-"}
+                          </td>
+                        );
                       })}
                     <td className="text-primary">
                       <b>{item.averages.Phy}</b>

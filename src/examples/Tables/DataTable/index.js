@@ -21,7 +21,7 @@ import * as XLSX from "xlsx";
 import { saveAs } from "file-saver";
 import { Print } from "@mui/icons-material";
 import { useReactToPrint } from "react-to-print";
-import { Printer, X } from "react-feather";
+import { Printer, User, X } from "react-feather";
 
 const ResultsTable = ({ marksData, stuData }) => {
   // Collect all unique dates to use as headers
@@ -41,6 +41,8 @@ const ResultsTable = ({ marksData, stuData }) => {
   const subjects = ["All_Subjects", "Mat", "Phy", "Che"];
   const [selectedSection, setSelectedSection] = useState("All_Sections");
   const [sections, setSections] = useState(["All_Sections"]);
+  const [searchInput, setSearchInput] = useState("");
+  // const [profileViewStudent, setProfileViewStudent] = useState("");
 
   const handleCampusChange = (e) => {
     const campus = e.target.value;
@@ -93,8 +95,15 @@ const ResultsTable = ({ marksData, stuData }) => {
     if (selectedMentor !== "All_Mentors") {
       data = data.filter((item) => item.Mentor === selectedMentor);
     }
+    if (searchInput) {
+      data = data.filter(
+        (item) =>
+          item.StudentName.toLowerCase().includes(searchInput.toLowerCase()) ||
+          item.RollNo.toLowerCase().includes(searchInput.toLowerCase())
+      );
+    }
     return data;
-  }, [marksData, selectedCampus, selectedSection, selectedMentor]);
+  }, [marksData, selectedCampus, selectedSection, selectedMentor, searchInput]);
 
   // Compute averages and sort data
   const sortedMarksData = useMemo(() => {
@@ -110,21 +119,33 @@ const ResultsTable = ({ marksData, stuData }) => {
 
   // Function to calculate averages
   function calculateAverages(marks) {
-    const totals = { Mat: 0, Phy: 0, Che: 0, Tot: 0, count: 0 };
+    const totals = { Mat: 0, Phy: 0, Che: 0, Tot: 0 };
+    const counts = { Mat: 0, Phy: 0, Che: 0, Tot: 0 };
 
     marks.forEach((mark) => {
-      totals.Mat += parseInt(mark.Mat, 10) || 0;
-      totals.Phy += parseInt(mark.Phy, 10) || 0;
-      totals.Che += parseInt(mark.Che, 10) || 0;
-      totals.Tot += parseInt(mark.Tot, 10) || 0;
-      totals.count += 1;
+      if (mark.Mat !== "A") {
+        totals.Mat += parseInt(mark.Mat, 10);
+        counts.Mat += 1;
+      }
+      if (mark.Phy !== "A") {
+        totals.Phy += parseInt(mark.Phy, 10);
+        counts.Phy += 1;
+      }
+      if (mark.Che !== "A") {
+        totals.Che += parseInt(mark.Che, 10);
+        counts.Che += 1;
+      }
+      if (mark.Tot !== "A") {
+        totals.Tot += parseInt(mark.Tot, 10);
+        counts.Tot += 1;
+      }
     });
 
     return {
-      Mat: (totals.Mat / totals.count).toFixed(2),
-      Phy: (totals.Phy / totals.count).toFixed(2),
-      Che: (totals.Che / totals.count).toFixed(2),
-      Tot: (totals.Tot / totals.count).toFixed(2),
+      Mat: counts.Mat ? (totals.Mat / counts.Mat).toFixed(2) : "N/A",
+      Phy: counts.Phy ? (totals.Phy / counts.Phy).toFixed(2) : "N/A",
+      Che: counts.Che ? (totals.Che / counts.Che).toFixed(2) : "N/A",
+      Tot: counts.Tot ? (totals.Tot / counts.Tot).toFixed(2) : "N/A",
     };
   }
 
@@ -226,24 +247,43 @@ const ResultsTable = ({ marksData, stuData }) => {
     setSelectedStudent(student);
 
     const totals = { Mat: 0, Phy: 0, Che: 0, Tot: 0 };
+    let count = 0;
+
     student.WeekendMarks.forEach((mark) => {
-      totals.Mat += parseInt(mark.Mat, 10) || 0;
-      totals.Phy += parseInt(mark.Phy, 10) || 0;
-      totals.Che += parseInt(mark.Che, 10) || 0;
-      totals.Tot += parseInt(mark.Tot, 10) || 0;
+      if (mark.Mat !== "A") {
+        totals.Mat += parseInt(mark.Mat, 10) || 0;
+        count++;
+      }
+      if (mark.Phy !== "A") {
+        totals.Phy += parseInt(mark.Phy, 10) || 0;
+      }
+      if (mark.Che !== "A") {
+        totals.Che += parseInt(mark.Che, 10) || 0;
+      }
+      if (mark.Tot !== "A") {
+        totals.Tot += parseInt(mark.Tot, 10) || 0;
+      }
     });
 
-    const count = student.WeekendMarks.length;
+    const averageMat = count ? (totals.Mat / count).toFixed(2) : "N/A";
+    const averagePhy = count ? (totals.Phy / count).toFixed(2) : "N/A";
+    const averageChe = count ? (totals.Che / count).toFixed(2) : "N/A";
+    const averageTot = count ? (totals.Tot / count).toFixed(2) : "N/A";
 
     setStudentAverages({
-      Mat: (totals.Mat / count).toFixed(2),
-      Phy: (totals.Phy / count).toFixed(2),
-      Che: (totals.Che / count).toFixed(2),
-      Tot: (totals.Tot / count).toFixed(2),
+      Mat: averageMat,
+      Phy: averagePhy,
+      Che: averageChe,
+      Tot: averageTot,
     });
 
     toggleModal();
   };
+
+  // const handleStuProfileData = (selRollNo) => {
+  //   const selectedStudent = stuData.find((student) => student.RollNo === selRollNo);
+  //   setProfileViewStudent(selectedStudent);
+  // };
 
   return (
     <Fragment>
@@ -271,6 +311,14 @@ const ResultsTable = ({ marksData, stuData }) => {
         <div className="mb-1 justify-content-right">
           <Row>
             <Col>
+              <Input
+                type="text"
+                value={searchInput}
+                onChange={(e) => setSearchInput(e.target.value)}
+                placeholder="Search Student...."
+                aria-label="Search Student Name"
+                style={{ display: "inline", width: "auto", marginRight: "20px", fontSize: "15px" }}
+              />
               <Input
                 type="select"
                 value={selectedCampus}
@@ -354,86 +402,6 @@ const ResultsTable = ({ marksData, stuData }) => {
         <CardBody className="small mb-0 text-center">
           <div ref={printableTableRef}>
             <Table responsive striped bordered hover>
-              {/* <thead>
-                <tr>
-                  <th rowSpan={2}>S.No</th>
-                  <th rowSpan={2}>Name of the Student</th>
-                  <th rowSpan={2}>Roll No</th>
-                  <th rowSpan={2}>Caste</th>
-                  <th rowSpan={2}>Campus</th>
-                  <th rowSpan={2}>Mentor</th>
-                  {viewMode === "all" &&
-                    allDates.map((date, index) => (
-                      <th key={index} colSpan={4} className="text-danger">
-                        {date}
-                      </th>
-                    ))}
-                  {viewMode === "totals" &&
-                    allDates.map((date, index) => <th key={index}>{date.slice(0, 5)}</th>)}
-                  <th colSpan={4}>Averages</th>
-                </tr>
-                <tr>
-                  {viewMode === "all" &&
-                    allDates.map((date, index) => (
-                      <Fragment key={index}>
-                        <th>Mat</th>
-                        <th>Phy</th>
-                        <th>Che</th>
-                        <th>Tot</th>
-                      </Fragment>
-                    ))}
-                  {viewMode === "totals" && allDates.map((date, index) => <th key={index}>Tot</th>)}
-                  {(viewMode === "all" || viewMode === "totals" || viewMode === "averages") && (
-                    <Fragment>
-                      <th>Mat</th>
-                      <th>Phy</th>
-                      <th>Che</th>
-                      <th>Tot</th>
-                    </Fragment>
-                  )}
-                </tr>
-              </thead> */}
-              {/* <tbody>
-                {paginatedData.map((item, index) => (
-                  <tr key={index}>
-                    <td>{index + 1 + (currentPage - 1) * recordsPerPage}</td>
-                    <td className="justify-content-left">{item.StudentName}</td>
-                    <td>{item.RollNo}</td>
-                    <td>{item.Caste}</td>
-                    <td>{item.Campus}</td>
-                    <td>{item.Mentor}</td>
-                    {viewMode === "all" &&
-                      allDates.map((date, dateIndex) => {
-                        const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return (
-                          <Fragment key={dateIndex}>
-                            <td style={{ borderLeft: "2px solid black" }}>{marks.Mat || "-"}</td>
-                            <td>{marks.Phy || "-"}</td>
-                            <td>{marks.Che || "-"}</td>
-                            <td style={{ borderRight: "2px solid black" }}>{marks.Tot || "-"}</td>
-                          </Fragment>
-                        );
-                      })}
-                    {viewMode === "totals" &&
-                      allDates.map((date, dateIndex) => {
-                        const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return <td key={dateIndex}>{marks.Tot || "-"}</td>;
-                      })}
-                    <td className="text-primary">
-                      <b>{item.averages.Mat}</b>
-                    </td>
-                    <td className="text-primary">
-                      <b>{item.averages.Phy}</b>
-                    </td>
-                    <td className="text-primary">
-                      <b>{item.averages.Che}</b>
-                    </td>
-                    <td className="text-danger">
-                      <b>{item.averages.Tot}</b>
-                    </td>
-                  </tr>
-                ))}
-              </tbody> */}
               <thead>
                 <tr>
                   <th rowSpan={2}>S.No</th>
@@ -506,10 +474,24 @@ const ResultsTable = ({ marksData, stuData }) => {
                         const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
                         return (
                           <Fragment key={dateIndex}>
-                            <td style={{ borderLeft: "2px solid black" }}>{marks.Mat || "-"}</td>
-                            <td>{marks.Phy || "-"}</td>
-                            <td>{marks.Che || "-"}</td>
-                            <td style={{ borderRight: "2px solid black" }}>{marks.Tot || "-"}</td>
+                            <td
+                              style={{ borderLeft: "2px solid black" }}
+                              className={marks.Mat === "A" ? "bg-warning" : ""}
+                            >
+                              {marks.Mat || "-"}
+                            </td>
+                            <td className={marks.Phy === "A" ? "bg-warning" : ""}>
+                              {marks.Phy || "-"}
+                            </td>
+                            <td className={marks.Che === "A" ? "bg-warning" : ""}>
+                              {marks.Che || "-"}
+                            </td>
+                            <td
+                              style={{ borderRight: "2px solid black" }}
+                              className={marks.Tot === "A" ? "bg-warning" : ""}
+                            >
+                              {marks.Tot || "-"}
+                            </td>
                           </Fragment>
                         );
                       })}
@@ -522,7 +504,11 @@ const ResultsTable = ({ marksData, stuData }) => {
                     {viewMode === "totals" &&
                       allDates.map((date, dateIndex) => {
                         const marks = item.WeekendMarks.find((mark) => mark.Date === date) || {};
-                        return <td key={dateIndex}>{marks.Tot || "-"}</td>;
+                        return (
+                          <td key={dateIndex} className={marks.Tot === "A" ? "bg-warning" : ""}>
+                            {marks.Tot || "-"}
+                          </td>
+                        );
                       })}
                     <td className="text-primary">
                       <b>{item.averages.Mat}</b>
@@ -601,13 +587,21 @@ const ResultsTable = ({ marksData, stuData }) => {
                 <strong>Roll No:</strong> {selectedStudent.RollNo}
               </div>
             </div>
-            <div className="d-flex justify-content-between disable-print">
+            <div className="d-flex justify-content-between disable-print mt-2">
               <div>
                 <strong>Caste:</strong> {selectedStudent.Caste}
               </div>
               <div>
                 <strong>Campus:</strong> {selectedStudent.Campus}
               </div>
+              {/* <div
+                className="text-primary"
+                style={{ textDecoration: "underline", cursor: "pointer" }}
+                onClick={() => handleStuProfileData(selectedStudent.RollNo)}
+              >
+                <User size={20} />
+                View
+              </div> */}
             </div>
             <Table bordered striped responsive className="mt-2">
               <thead className="table-primary font-small">

@@ -422,8 +422,11 @@ const Dashboard = () => {
                   }
                   percentage={{
                     color: "success",
-                    amount: "",
-                    label: "Last Updated on @10.07.2024",
+                    amount:
+                      finalData.length > 0
+                        ? `${((finalStaffData.length / finalData.length) * 100).toFixed(2)}%`
+                        : "0%",
+                    label: "of Student Count",
                   }}
                 />
               </MDBox>
@@ -461,12 +464,12 @@ const Dashboard = () => {
           </Grid>
           <MDBox mt={4.5}>
             <Grid container spacing={3}>
-              <Grid item xs={12} md={12} lg={12}>
+              <Grid item xs={12} md={6} lg={6}>
                 <MDBox mb={3}>
                   <XIIITSuper60 stuData={finalData} />
                 </MDBox>
               </Grid>
-              <Grid item xs={12} md={12} lg={12}>
+              <Grid item xs={12} md={6} lg={6}>
                 <MDBox mb={3}>
                   <MDBox mb={3}>
                     <XIINEETSuper60 stuData={finalData} />
@@ -794,8 +797,8 @@ const Dashboard = () => {
                     <th>Class</th>
                     <th>Section</th>
                     <th>Group</th>
-                    {/* <th>Mobile No</th>
-                    <th>Email ID</th> */}
+                    <th>Mobile No</th>
+                    <th>Email ID</th>
                     <th>Action</th>
                   </tr>
                 </thead>
@@ -812,13 +815,12 @@ const Dashboard = () => {
                       <td>{student.Class}</td>
                       <td>{student.Section}</td>
                       <td>{student.Group}</td>
-                      {/* <td>
+                      <td>
                         {student.Mobile1} <br /> {student.Mobile2}
                       </td>
                       <td style={{}}>
                         {student.Email_ID1} <br /> {student.Email_ID2}
-                      </td> */}
-                      <td>{student.Group}</td>
+                      </td>
                       <td
                         onClick={() => handleStuEdit(index + 1, student, student.Sno)}
                         style={{
