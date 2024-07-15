@@ -198,6 +198,7 @@ const StaffDailyAttendance = ({ staffData }) => {
           </Card>
         </Col>
       </Row>
+      <hr />
       <div className="d-flex justify-content-between mb-2">
         <div>
           <div>
