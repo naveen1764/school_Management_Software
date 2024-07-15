@@ -49,6 +49,7 @@ import { saveAs } from "file-saver";
 import XIIITSuper60 from "./xiIITSuper60";
 import XIINEETSuper60 from "./xiiNEETSuper60";
 import StaffDetails from "./staffDetails";
+import StaffDailyAttendance from "./staffDayAttendance";
 
 const modalStyle = {
   position: "absolute",
@@ -83,10 +84,12 @@ const Dashboard = () => {
   //Set Variables
   const [isHovered, setIsHovered] = useState(false);
   const [isStaffHovered, setIsStaffHovered] = useState(false);
+  const [isStfAttHover, setIsStfAttHover] = useState(false);
   const [openStuModal, setOpenStuModal] = useState(false);
   const [openDetailModal, setOpenDetailModal] = useState(false);
   const [detailData, setDetailData] = useState([]);
   const [staffModal, setStaffModal] = useState(false);
+  const [stfAttModal, setStfAttModal] = useState(false);
   const [selectedTitle, setSelectedTitle] = useState("");
   const [openEditModal, setOpenEditModal] = useState(false);
   const [editId, setEditId] = useState();
@@ -111,9 +114,50 @@ const Dashboard = () => {
     setIsStaffHovered(false);
   };
 
+  const handleStfAttEnter = () => {
+    setIsStfAttHover(true);
+  };
+
+  const handleStfAttLeave = () => {
+    setIsStfAttHover(false);
+  };
+
   const [apiData, setApiData] = useState([]);
   const [staffData, setStaffData] = useState([]);
   const finalStaffData = staffData.filter((item) => item.Status === "Active");
+  const today = new Date();
+  const todayDate = `${String(today.getDate()).padStart(2, "0")}-${String(
+    today.getMonth() + 1
+  ).padStart(2, "0")}-${today.getFullYear()}`; // DD-MM-YYYY format
+
+  const convertDateString = (dateStr) => {
+    const [day, month, year] = dateStr.split("-");
+    const monthMap = {
+      Jan: "01",
+      Feb: "02",
+      Mar: "03",
+      Apr: "04",
+      May: "05",
+      Jun: "06",
+      Jul: "07",
+      Aug: "08",
+      Sep: "09",
+      Oct: "10",
+      Nov: "11",
+      Dec: "12",
+    };
+    return `${String(day).padStart(2, "0")}-${monthMap[month]}-${year}`;
+  };
+
+  const todayAttendance = finalStaffData.filter((staff) => {
+    const lastAttendance = staff.attObject[staff.attObject.length - 1];
+    if (lastAttendance && lastAttendance.date) {
+      const attDate = convertDateString(lastAttendance.date);
+      return attDate === todayDate && lastAttendance.in !== "-";
+    }
+    return false;
+  });
+
   const [refresh, setRefresh] = useState([]);
   const finalData = apiData && apiData.filter((ff) => ff.Sno != "" && ff.Status === "Active");
 
@@ -273,6 +317,10 @@ const Dashboard = () => {
 
   const handleStaffOpen = () => {
     setStaffModal(!staffModal);
+  };
+
+  const handleStaffAttOpen = () => {
+    setStfAttModal(!stfAttModal);
   };
 
   const handleOpenDetail = (students, title) => {
@@ -449,14 +497,45 @@ const Dashboard = () => {
             <Grid item xs={12} md={6} lg={3}>
               <MDBox mb={1.5}>
                 <ComplexStatisticsCard
-                  color="primary"
-                  icon="badge"
+                  color="dark"
+                  icon="groups"
                   title="Staff Attendance"
-                  count="180"
+                  count={
+                    todayAttendance.length > 0 ? (
+                      <div
+                        style={{
+                          textDecoration: isStfAttHover ? "underline" : "none",
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                        onMouseEnter={handleStfAttEnter}
+                        onMouseLeave={handleStfAttLeave}
+                        onClick={handleStaffAttOpen}
+                      >
+                        {todayAttendance.length}
+                      </div>
+                    ) : (
+                      <div
+                        onMouseEnter={handleStfAttEnter}
+                        onMouseLeave={handleStfAttLeave}
+                        onClick={handleStaffAttOpen}
+                        style={{
+                          textDecoration: isStfAttHover ? "underline" : "none",
+                          cursor: "pointer",
+                          display: "inline-block",
+                        }}
+                      >
+                        <small className="text-danger"> Not Updated !</small>
+                      </div>
+                    )
+                  }
                   percentage={{
                     color: "success",
-                    amount: "+2%",
-                    label: "than yesterday",
+                    amount:
+                      finalData.length > 0
+                        ? `${((todayAttendance.length / finalStaffData.length) * 100).toFixed(2)}%`
+                        : "0%",
+                    label: "Attended",
                   }}
                 />
               </MDBox>
@@ -1042,6 +1121,19 @@ const Dashboard = () => {
           <ModalHeader toggle={handleStaffOpen}> Staff Details </ModalHeader>
           <ModalBody className="h6">
             <StaffDetails staffData={finalStaffData} />
+          </ModalBody>
+        </Modal>
+      </>
+
+      <>
+        <Modal
+          className="modal-dialog modal-dialog-centered modal-xxl"
+          isOpen={stfAttModal}
+          toggle={handleStaffAttOpen}
+        >
+          <ModalHeader toggle={handleStaffAttOpen}> Staff Daily Attendance Details </ModalHeader>
+          <ModalBody className="h6">
+            <StaffDailyAttendance staffData={finalStaffData} />
           </ModalBody>
         </Modal>
       </>
