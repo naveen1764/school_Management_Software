@@ -179,10 +179,23 @@ function Sidenav({ color, brand, brandName, routes, ...rest }) {
         }
       />
       <List>{renderRoutes}</List>
-      <MDBox p={2} mt="auto">
+      {/* <MDBox p={2} mt="auto">
         <MDButton
           component="a"
           href="https://naveenmadasu.netlify.app/"
+          target="_blank"
+          rel="noreferrer"
+          variant="gradient"
+          color={sidenavColor}
+          fullWidth
+        >
+          GO TO WEBSITE
+        </MDButton> */}
+      {/* </MDBox> */}
+      <MDBox p={2} mt="auto">
+        <MDButton
+          component="a"
+          href="https://velammalbodhicampus.com/schools.php"
           target="_blank"
           rel="noreferrer"
           variant="gradient"
