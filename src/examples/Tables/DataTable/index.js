@@ -402,7 +402,7 @@ const ResultsTable = ({ marksData, stuData }) => {
         <CardBody className="small mb-0 text-center">
           <div ref={printableTableRef}>
             <Table responsive striped bordered hover>
-              <thead>
+              <thead className="table-info">
                 <tr>
                   <th rowSpan={2}>S.No</th>
                   <th rowSpan={2}>Name of the Student</th>
