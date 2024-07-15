@@ -25,7 +25,7 @@ import MDButton from "components/MDButton";
 import BasicLayout from "layouts/authentication/components/BasicLayout";
 
 // Images
-import bgImage from "assets/images/bg-sign-in-basic.jpeg";
+import bgImage from "assets/images/bg-sign-in-basic.jpg";
 
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
@@ -58,7 +58,7 @@ function Basic() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={0}>
-            Bodhi Central Office Login
+            Velammal Bodhi Central Office
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>
