@@ -32,6 +32,7 @@ import * as XLSX from "xlsx";
 
 const StaffDailyAttendance = ({ staffData }) => {
   const [filteredStaffData, setFilteredStaffData] = useState(staffData);
+  console.log(filteredStaffData, "Filtered Staff Data");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("All_School");
@@ -40,6 +41,7 @@ const StaffDailyAttendance = ({ staffData }) => {
   const [selectedDesig, setSelectedDesig] = useState("All_Desig");
   const [selectedSubject, setSelectedSubject] = useState("All_Subject");
   const [selectedGender, setSelectedGender] = useState("All_Genders");
+  const [selectedCard, setSelectedCard] = useState("TotalStaff");
 
   const printableTableRef = useRef();
 
@@ -84,6 +86,33 @@ const StaffDailyAttendance = ({ staffData }) => {
       });
     }
 
+    filteredData = filteredData.filter((item) => {
+      const lastAttendance = item.attObject[item.attObject.length - 1];
+      const inTime = lastAttendance?.in ?? "-";
+      const outTime = lastAttendance?.out ?? "-";
+      const remark = calculateRemarks(
+        item.ShiftIn,
+        item.ShiftOut,
+        inTime,
+        outTime,
+        lastAttendance?.remark ?? "-"
+      );
+
+      if (selectedCard === "TotalStaff") {
+        return true;
+      } else if (selectedCard === "Present") {
+        return remark.includes("Present");
+      } else if (selectedCard === "Absent") {
+        return inTime === "-";
+      } else if (selectedCard === "LateArrivals") {
+        return remark.includes("Late");
+      } else if (selectedCard === "EarlyGo") {
+        return remark.includes("Early Go");
+      }
+
+      return true;
+    });
+
     setFilteredStaffData(filteredData);
   }, [
     selectedSchool,
@@ -94,6 +123,7 @@ const StaffDailyAttendance = ({ staffData }) => {
     staffData,
     selectedGender,
     searchTerm,
+    selectedCard,
   ]);
 
   const handlePrint = useReactToPrint({
@@ -154,7 +184,7 @@ const StaffDailyAttendance = ({ staffData }) => {
     }
 
     let earlyRemark = "";
-    if (outDifference < 0) {
+    if (outDifference > 0) {
       earlyRemark = `Early Go : ${Math.abs(outDifference)} min`;
     }
 
@@ -173,27 +203,47 @@ const StaffDailyAttendance = ({ staffData }) => {
     <Fragment>
       <Row className="mb-3 text-center align-items-center justify-content-center">
         <Col md={1}>
-          <Card className="bg-primary text-white" style={{ cursor: "pointer" }}>
+          <Card
+            className="bg-primary text-white"
+            style={{ cursor: "pointer" }}
+            onClick={() => setSelectedCard("TotalStaff")}
+          >
             <CardBody>Total Staff</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-success text-white" style={{ cursor: "pointer" }}>
+          <Card
+            className="bg-success text-white"
+            style={{ cursor: "pointer" }}
+            onClick={() => setSelectedCard("Present")}
+          >
             <CardBody>Present</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-danger text-white" style={{ cursor: "pointer" }}>
+          <Card
+            className="bg-danger text-white"
+            style={{ cursor: "pointer" }}
+            onClick={() => setSelectedCard("Absent")}
+          >
             <CardBody>Absent</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-warning" style={{ cursor: "pointer" }}>
+          <Card
+            className="bg-warning"
+            style={{ cursor: "pointer" }}
+            onClick={() => setSelectedCard("LateArrivals")}
+          >
             <CardBody>Late Arrivals</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-secondary text-white" style={{ cursor: "pointer" }}>
+          <Card
+            className="bg-secondary text-white"
+            style={{ cursor: "pointer" }}
+            onClick={() => setSelectedCard("EarlyGo")}
+          >
             <CardBody>Early Go</CardBody>
           </Card>
         </Col>
@@ -350,8 +400,9 @@ const StaffDailyAttendance = ({ staffData }) => {
                 <tr key={index}>
                   <td>{index + 1}</td>
                   <td
-                    className={item.Gender === "Female" ? "text-danger" : ""}
-                    style={{ textAlign: "left" }}
+                    className={item.Gender === "Female" ? "text-danger" : "text-primary"}
+                    style={{ textAlign: "left", cursor: "pointer" }}
+                    onClick={() => handleAttDtlsView(index + 1, item)}
                   >
                     {item.StaffName}
                   </td>
