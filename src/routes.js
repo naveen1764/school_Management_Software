@@ -10,6 +10,7 @@ import SignUp from "layouts/authentication/sign-up";
 
 // @mui icons
 import Icon from "@mui/material/Icon";
+import ImportantDates from "layouts/profile/importantDates";
 
 const routes = [
   {
@@ -43,6 +44,14 @@ const routes = [
     icon: <Icon fontSize="small">person</Icon>,
     route: "/profile",
     component: <Profile />,
+  },
+  {
+    type: "collapse",
+    name: "Important Dates",
+    key: "important-dates",
+    icon: <Icon fontSize="small">pinch</Icon>,
+    route: "/important-dates",
+    component: <ImportantDates />,
   },
   {
     type: "collapse",

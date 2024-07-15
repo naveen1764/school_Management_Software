@@ -9,7 +9,7 @@ const Notifications = () => {
       <Card className="small">
         <CardBody className="">
           <div className="h5 mb-3">
-            <Badge color="primary">XI IIT (Regular - Hostel) Academic Calendars (2024-25)</Badge>
+            <h6 className="text-primary">XI IIT (Regular - Hostel) Academic Calendars (2024-25)</h6>
           </div>
           <Row>
             <Col md={6}>

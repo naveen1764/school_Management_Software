@@ -142,7 +142,7 @@ const StaffDailyAttendance = ({ staffData }) => {
 
   const calculateRemarks = (shiftIn, shiftOut, inTime, outTime, remark) => {
     if (inTime === "-") {
-      return remark && remark !== "-" ? `Leave - ${remark}` : "-";
+      return remark && remark !== "-" ? `Absent - ${remark}` : "-";
     }
 
     const inDifference = calculateTimeDifference(shiftIn, inTime);
@@ -173,27 +173,27 @@ const StaffDailyAttendance = ({ staffData }) => {
     <Fragment>
       <Row className="mb-3 text-center align-items-center justify-content-center">
         <Col md={1}>
-          <Card className="bg-primary text-white">
+          <Card className="bg-primary text-white" style={{ cursor: "pointer" }}>
             <CardBody>Total Staff</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-success text-white">
+          <Card className="bg-success text-white" style={{ cursor: "pointer" }}>
             <CardBody>Present</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-danger text-white">
+          <Card className="bg-danger text-white" style={{ cursor: "pointer" }}>
             <CardBody>Absent</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-warning">
+          <Card className="bg-warning" style={{ cursor: "pointer" }}>
             <CardBody>Late Arrivals</CardBody>
           </Card>
         </Col>
         <Col md={1}>
-          <Card className="bg-secondary text-white">
+          <Card className="bg-secondary text-white" style={{ cursor: "pointer" }}>
             <CardBody>Early Go</CardBody>
           </Card>
         </Col>
@@ -328,8 +328,8 @@ const StaffDailyAttendance = ({ staffData }) => {
               <th>Designation</th>
               <th>Subject</th>
               <th>Timings</th>
-              <th className="table-primary">IN Time</th>
-              <th className="table-primary">OUT Time</th>
+              <th className="table-warning">IN Time</th>
+              <th className="table-warning">OUT Time</th>
               <th>Status</th>
             </tr>
           </thead>
@@ -364,8 +364,8 @@ const StaffDailyAttendance = ({ staffData }) => {
                   <td>{item.Desig}</td>
                   <td>{item.Subject}</td>
                   <td>{`${item.ShiftIn} - ${item.ShiftOut}`}</td>
-                  <td className="table-primary">{inTime}</td>
-                  <td className="table-primary">{outTime}</td>
+                  <td className="table-warning">{inTime}</td>
+                  <td className="table-warning">{outTime}</td>
                   <td className={remark === "Present" ? "text-success" : "text-danger"}>
                     {remark}
                   </td>
