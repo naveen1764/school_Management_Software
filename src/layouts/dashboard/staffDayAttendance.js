@@ -14,6 +14,7 @@ import {
   Badge,
   Card,
   CardBody,
+  Label,
 } from "reactstrap";
 import "styles.css";
 import {
@@ -29,10 +30,11 @@ import { useReactToPrint } from "react-to-print";
 import { ArrowRightCircle, DollarSign, Eye } from "react-feather";
 import IndividualStaffData from "./indvdualStaffData";
 import * as XLSX from "xlsx";
+import Flatpickr from "react-flatpickr";
+import "flatpickr/dist/themes/material_blue.css";
 
 const StaffDailyAttendance = ({ staffData }) => {
   const [filteredStaffData, setFilteredStaffData] = useState(staffData);
-  console.log(filteredStaffData, "Filtered Staff Data");
 
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedSchool, setSelectedSchool] = useState("All_School");
@@ -42,17 +44,25 @@ const StaffDailyAttendance = ({ staffData }) => {
   const [selectedSubject, setSelectedSubject] = useState("All_Subject");
   const [selectedGender, setSelectedGender] = useState("All_Genders");
   const [selectedCard, setSelectedCard] = useState("TotalStaff");
+  const [selectedDate, setSelectedDate] = useState(new Date());
 
   const printableTableRef = useRef();
+
+  const formatDate = (date) => {
+    const options = { year: "numeric", month: "short", day: "numeric" };
+    return new Date(date).toLocaleDateString("en-GB", options).replace(/ /g, "-").replace(",", "");
+  };
 
   const today = new Date();
   const todayDate = `${String(today.getDate()).padStart(2, "0")}-${String(
     today.getMonth() + 1
   ).padStart(2, "0")}-${today.getFullYear()}`; // DD-MM-YYYY format
+  console.log(todayDate, "Today Date");
 
   useEffect(() => {
     let filteredData = staffData;
 
+    // Apply filters based on selected criteria
     if (selectedSchool !== "All_School") {
       filteredData = filteredData.filter((item) => item.SchoolName === selectedSchool);
     }
@@ -72,32 +82,42 @@ const StaffDailyAttendance = ({ staffData }) => {
       filteredData = filteredData.filter((item) => item.Gender === selectedGender);
     }
     if (searchTerm) {
-      filteredData = filteredData.filter((item) => {
-        return (
-          item.StaffName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.EmpCode.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.DateofJoin.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.SchoolName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.CampusName.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.Dept.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.Desig.toLowerCase().includes(searchTerm.toLowerCase()) ||
-          item.Subject.toLowerCase().includes(searchTerm.toLowerCase())
-        );
-      });
+      const lowerCaseSearch = searchTerm.toLowerCase();
+      filteredData = filteredData.filter((item) =>
+        Object.values(item).some(
+          (val) => typeof val === "string" && val.toLowerCase().includes(lowerCaseSearch)
+        )
+      );
     }
 
+    // Filter based on selected date in attObject
+    const formattedSelectedDate = formatDate(selectedDate);
     filteredData = filteredData.filter((item) => {
-      const lastAttendance = item.attObject[item.attObject.length - 1];
-      const inTime = lastAttendance?.in ?? "-";
-      const outTime = lastAttendance?.out ?? "-";
+      const attendanceOnSelectedDate = item.attObject.some((attendance) => {
+        const attendanceDate = formatDate(new Date(attendance.date));
+        return attendanceDate === formattedSelectedDate;
+      });
+
+      if (!attendanceOnSelectedDate) {
+        return false;
+      }
+
+      const matchingAttendance = item.attObject.find((attendance) => {
+        const attendanceDate = formatDate(new Date(attendance.date));
+        return attendanceDate === formattedSelectedDate;
+      });
+
+      const inTime = matchingAttendance?.in ?? "-";
+      const outTime = matchingAttendance?.out ?? "-";
       const remark = calculateRemarks(
         item.ShiftIn,
         item.ShiftOut,
         inTime,
         outTime,
-        lastAttendance?.remark ?? "-"
+        matchingAttendance?.remark ?? "-"
       );
 
+      // Apply selectedCard filter based on the remarks
       if (selectedCard === "TotalStaff") {
         return true;
       } else if (selectedCard === "Present") {
@@ -113,6 +133,7 @@ const StaffDailyAttendance = ({ staffData }) => {
       return true;
     });
 
+    // Set the filtered data to state
     setFilteredStaffData(filteredData);
   }, [
     selectedSchool,
@@ -124,6 +145,7 @@ const StaffDailyAttendance = ({ staffData }) => {
     selectedGender,
     searchTerm,
     selectedCard,
+    selectedDate, // Ensure useEffect runs when selectedDate changes
   ]);
 
   const handlePrint = useReactToPrint({
@@ -202,50 +224,50 @@ const StaffDailyAttendance = ({ staffData }) => {
   return (
     <Fragment>
       <Row className="mb-3 text-center align-items-center justify-content-center">
-        <Col md={1}>
-          <Card
-            className="bg-primary text-white"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCard("TotalStaff")}
-          >
-            <CardBody>Total Staff</CardBody>
-          </Card>
+        {[
+          { id: "TotalStaff", text: "Total Staff", color: "primary" },
+          { id: "Present", text: "Present", color: "success" },
+          { id: "Absent", text: "Absent", color: "danger" },
+          { id: "LateArrivals", text: "Late Arrivals", color: "warning" },
+          { id: "EarlyGo", text: "Early Go", color: "secondary" },
+        ].map(({ id, text, color }) => (
+          <Col md={1} key={id}>
+            <Card
+              className={`bg-${color} text-white`}
+              style={{
+                cursor: "pointer",
+                transition: "transform 0.2s, box-shadow 0.2s",
+                boxShadow: "0 0 1rem rgba(0, 0, 0, 0.2)",
+              }}
+              onMouseOver={(e) => {
+                e.currentTarget.style.transform = "scale(1.08)";
+                e.currentTarget.style.boxShadow = `0 0 1rem rgba(0, 0, 0, 0.5)`;
+              }}
+              onMouseOut={(e) => {
+                e.currentTarget.style.transform = "scale(1)";
+                e.currentTarget.style.boxShadow = "0 0 1rem rgba(0, 0, 0, 0.2)";
+              }}
+              onClick={() => setSelectedCard(id)}
+            >
+              <CardBody style={{ transition: "transform 0.2s" }}>{text}</CardBody>
+            </Card>
+          </Col>
+        ))}
+        <Col md={1} className="text-right">
+          <span style={{ lineHeight: "38px", marginRight: "-70px" }}>Select Date:</span>
         </Col>
         <Col md={1}>
-          <Card
-            className="bg-success text-white"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCard("Present")}
-          >
-            <CardBody>Present</CardBody>
-          </Card>
-        </Col>
-        <Col md={1}>
-          <Card
-            className="bg-danger text-white"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCard("Absent")}
-          >
-            <CardBody>Absent</CardBody>
-          </Card>
-        </Col>
-        <Col md={1}>
-          <Card
-            className="bg-warning"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCard("LateArrivals")}
-          >
-            <CardBody>Late Arrivals</CardBody>
-          </Card>
-        </Col>
-        <Col md={1}>
-          <Card
-            className="bg-secondary text-white"
-            style={{ cursor: "pointer" }}
-            onClick={() => setSelectedCard("EarlyGo")}
-          >
-            <CardBody>Early Go</CardBody>
-          </Card>
+          <Flatpickr
+            className="form-control"
+            options={{
+              altInput: true,
+              maxDate: new Date(),
+              altFormat: "F j, Y",
+              dateFormat: "Y-m-d",
+            }}
+            value={selectedDate}
+            onChange={(date) => setSelectedDate(date[0])}
+          />
         </Col>
       </Row>
       <hr />
@@ -378,6 +400,7 @@ const StaffDailyAttendance = ({ staffData }) => {
               <th>Designation</th>
               <th>Subject</th>
               <th>Timings</th>
+              <th>Date</th>
               <th className="table-warning">IN Time</th>
               <th className="table-warning">OUT Time</th>
               <th>Status</th>
@@ -385,15 +408,25 @@ const StaffDailyAttendance = ({ staffData }) => {
           </thead>
           <tbody>
             {filteredStaffData.map((item, index) => {
-              const lastAttendance = item.attObject[item.attObject.length - 1];
-              const inTime = lastAttendance?.in ?? "-";
-              const outTime = lastAttendance?.out ?? "-";
+              // Format selectedDate to match attObject.date format (DD-MMM-YYYY)
+              const formattedSelectedDate = formatDate(selectedDate);
+
+              // Filter attendance data based on formatted selectedDate
+              const selectedAttendance = item.attObject.find(
+                (attendance) => attendance.date === formattedSelectedDate
+              );
+
+              // If no attendance found for selectedDate, return null or handle accordingly
+              if (!selectedAttendance) return null;
+
+              const inTime = selectedAttendance.in ?? "-";
+              const outTime = selectedAttendance.out ?? "-";
               const remark = calculateRemarks(
                 item.ShiftIn,
                 item.ShiftOut,
                 inTime,
                 outTime,
-                lastAttendance?.remark ?? "-"
+                selectedAttendance.remark ?? "-"
               );
 
               return (
@@ -407,14 +440,12 @@ const StaffDailyAttendance = ({ staffData }) => {
                     {item.StaffName}
                   </td>
                   <td>{item.EmpCode}</td>
-                  {/* Uncomment the lines below if needed */}
-                  {/* <td>{item.DateofJoin}</td> */}
-                  {/* <td>{item.SchoolName}</td> */}
                   <td>{item.CampusName}</td>
                   <td>{item.Dept}</td>
                   <td>{item.Desig}</td>
                   <td>{item.Subject}</td>
                   <td>{`${item.ShiftIn} - ${item.ShiftOut}`}</td>
+                  <td className="text-danger small">{selectedAttendance.date}</td>
                   <td className="table-warning">{inTime}</td>
                   <td className="table-warning">{outTime}</td>
                   <td className={remark === "Present" ? "text-success" : "text-danger"}>
