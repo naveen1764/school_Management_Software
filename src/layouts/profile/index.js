@@ -1,16 +1,221 @@
-// Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
+import React, { Fragment } from "react";
+import { Badge, Card, CardBody, CardHeader, Col, Label, Row } from "reactstrap";
+import { Accordion } from "react-bootstrap";
 
-// Images
-import { Fragment } from "react";
-import { Card, CardBody } from "reactstrap";
+const cardStyles = {
+  cursor: "pointer",
+  transition: "transform 0.2s, box-shadow 0.2s",
+  boxShadow: "0 0 1rem rgba(0, 0, 0, 0.2)",
+};
+
+const onMouseOver = (e) => {
+  e.currentTarget.style.transform = "scale(1.08)";
+  e.currentTarget.style.boxShadow = `0 0 1rem rgba(0, 0, 0, 0.5)`;
+};
+
+const onMouseOut = (e) => {
+  e.currentTarget.style.transform = "scale(1)";
+  e.currentTarget.style.boxShadow = "0 0 1rem rgba(0, 0, 0, 0.2)";
+};
+
+const cardBodyStyles = {
+  transition: "transform 0.2s",
+};
+
+const linkStyles = {
+  textDecoration: "none",
+};
+
+const linkMouseOver = (e) => {
+  e.currentTarget.style.textDecoration = "underline";
+};
+
+const linkMouseOut = (e) => {
+  e.currentTarget.style.textDecoration = "none";
+};
 
 function Overview() {
   return (
     <DashboardLayout>
       <Fragment>
         <Card>
-          <CardBody>Ahivements Work in Progress.....</CardBody>
+          <CardHeader className="bg-secondary text-white">
+            <b>Bodhi Campus, Ponneri - Academic Achievements</b>
+          </CardHeader>
+          <CardBody>
+            <Accordion defaultActiveKey="0">
+              <Accordion.Item eventKey="0">
+                <Accordion.Header>
+                  <b>2023-2024</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <>
+                    <Row className="text-center justify-content-center">
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-primary text-white text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>
+                            <a
+                              href="https://drive.google.com/file/d/1b8lboh27vIK7rD4HA7JaGGN--N-EXj4u/view?usp=drive_link"
+                              className="h6"
+                              style={linkStyles}
+                              onMouseOver={linkMouseOver}
+                              onMouseOut={linkMouseOut}
+                              target="blank"
+                            >
+                              <b>NEET Results</b>
+                            </a>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-danger text-white text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-1) Phase-2</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-warning text-dark text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-1) Phase-1</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-info text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>JEE-Advanced</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-success text-white text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>Medical Selections</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-dark text-white text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>
+                            <a
+                              href="https://drive.google.com/file/d/1Mt7rceysEk8xcw2alfU9mWDfXoUETapK/view?usp=sharing"
+                              className="h6"
+                              style={linkStyles}
+                              onMouseOver={linkMouseOver}
+                              onMouseOut={linkMouseOut}
+                              target="blank"
+                            >
+                              <b>IIT/NIT/GFTIs Selections</b>
+                            </a>
+                          </CardBody>
+                        </Card>
+                      </Col>
+                    </Row>
+                    <Row className="justify-content-center text-center mt-3">
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-dark text-white h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>XII - CBSE Board</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-success text-white h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>KVPY Selections</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-danger text-white h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>NDA/NA Selections</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-warning text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-2) Phase-2</CardBody>
+                        </Card>
+                      </Col>
+                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                        <Card
+                          className={`bg-primary text-white text-center h6 mb-0`}
+                          style={cardStyles}
+                          onMouseOver={onMouseOver}
+                          onMouseOut={onMouseOut}
+                        >
+                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-2) Phase-1</CardBody>
+                        </Card>
+                      </Col>
+                    </Row>
+                  </>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="1">
+                <Accordion.Header>
+                  <b>2022-2023</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>Work in Progress....</div>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="2">
+                <Accordion.Header>
+                  <b>2021-2022</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>Work in Progress....</div>
+                </Accordion.Body>
+              </Accordion.Item>
+              <Accordion.Item eventKey="3">
+                <Accordion.Header>
+                  <b>2020-2021</b>
+                </Accordion.Header>
+                <Accordion.Body>
+                  <div>Work in Progress....</div>
+                </Accordion.Body>
+              </Accordion.Item>
+            </Accordion>
+          </CardBody>
         </Card>
       </Fragment>
     </DashboardLayout>
