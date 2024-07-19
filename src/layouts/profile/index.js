@@ -44,7 +44,7 @@ function Overview() {
             <b>Bodhi Campus, Ponneri - Academic Achievements</b>
           </CardHeader>
           <CardBody>
-            <Accordion defaultActiveKey="0">
+            <Accordion defaultActiveKey="">
               <Accordion.Item eventKey="0">
                 <Accordion.Header>
                   <b>2023-2024</b>

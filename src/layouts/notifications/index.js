@@ -9,7 +9,7 @@ const Notifications = () => {
       <Card className="small">
         <CardBody className="">
           <div className="h5 mb-3">
-            <h6 className="text-primary">XI IIT (Regular - Hostel) Academic Calendars (2024-25)</h6>
+            <Badge color="primary">XI IIT (Regular - Hostel) Academic Calendars (2024-25)</Badge>
           </div>
           <Row>
             <Col md={6}>
@@ -53,7 +53,7 @@ const Notifications = () => {
               </ButtonGroup>
               <hr className="mb-0 mt-2 text-danger" />
               <small>
-                Last Updated on @ <b className="text-success">02.07.2024</b>
+                Last Updated on @ <b className="text-success">19.07.2024</b>
               </small>
             </Col>
           </Row>
