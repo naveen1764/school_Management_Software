@@ -13,7 +13,7 @@ const ImportantDates = () => {
           <CardBody>
             <iframe
               src="https://docs.google.com/document/d/1wxvPg0xIrzvXyYsGpm7sh-OurJXW5CRiWKTJFYLNbxA/preview?usp=sharing"
-              width="1550"
+              width="1165"
               height="850"
               allow="autoplay"
             ></iframe>

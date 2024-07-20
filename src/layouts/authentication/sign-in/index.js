@@ -58,7 +58,7 @@ function Basic() {
           textAlign="center"
         >
           <MDTypography variant="h4" fontWeight="medium" color="white" mt={0}>
-            Velammal Bodhi Central Office
+            VELAMMAL - BODHI
           </MDTypography>
         </MDBox>
         <MDBox pt={4} pb={3} px={3}>

@@ -107,7 +107,7 @@ function App() {
       position="fixed"
       right="2rem"
       bottom="2rem"
-      zIndex={99}
+      zIndex={9999}
       color="dark"
       sx={{ cursor: "pointer" }}
       onClick={handleConfiguratorOpen}

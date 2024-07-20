@@ -3,24 +3,27 @@ import React, { Fragment } from "react";
 import { Badge, Card, CardBody, CardHeader, Col, Label, Row } from "reactstrap";
 import { Accordion } from "react-bootstrap";
 
-const cardStyles = {
+const cardStyles = (color) => ({
   cursor: "pointer",
-  transition: "transform 0.2s, box-shadow 0.2s",
+  transition: "transform 0.2s, box-shadow 0.2s, background-color 0.2s, color 0.2s",
   boxShadow: "0 0 1rem rgba(0, 0, 0, 0.2)",
-};
+  border: `2px solid ${color}`,
+  backgroundColor: "white",
+  color: color,
+});
 
 const onMouseOver = (e) => {
   e.currentTarget.style.transform = "scale(1.08)";
-  e.currentTarget.style.boxShadow = `0 0 1rem rgba(0, 0, 0, 0.5)`;
+  e.currentTarget.style.backgroundColor = e.currentTarget.style.borderColor;
+  e.currentTarget.style.color = "white";
+  e.currentTarget.style.boxShadow = "0 0 1rem rgba(0, 0, 0, 0.5)";
 };
 
 const onMouseOut = (e) => {
   e.currentTarget.style.transform = "scale(1)";
+  e.currentTarget.style.backgroundColor = "white";
+  e.currentTarget.style.color = e.currentTarget.style.borderColor;
   e.currentTarget.style.boxShadow = "0 0 1rem rgba(0, 0, 0, 0.2)";
-};
-
-const cardBodyStyles = {
-  transition: "transform 0.2s",
 };
 
 const linkStyles = {
@@ -52,14 +55,14 @@ function Overview() {
                 <Accordion.Body>
                   <>
                     <Row className="text-center justify-content-center">
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-primary text-white text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#007bff")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>
+                          <CardBody>
                             <a
                               href="https://drive.google.com/file/d/1b8lboh27vIK7rD4HA7JaGGN--N-EXj4u/view?usp=drive_link"
                               className="h6"
@@ -73,54 +76,54 @@ function Overview() {
                           </CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-danger text-white text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#dc3545")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-1) Phase-2</CardBody>
+                          <CardBody>JEE-MAINS (P-1) Phase-2</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-warning text-dark text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#ffc107")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-1) Phase-1</CardBody>
+                          <CardBody>JEE-MAINS (P-1) Phase-1</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-info text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#17a2b8")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>JEE-Advanced</CardBody>
+                          <CardBody>JEE-Advanced</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-success text-white text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#28a745")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>Medical Selections</CardBody>
+                          <CardBody>Medical Selections</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-dark text-white text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#343a40")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>
+                          <CardBody>
                             <a
                               href="https://drive.google.com/file/d/1Mt7rceysEk8xcw2alfU9mWDfXoUETapK/view?usp=sharing"
                               className="h6"
@@ -134,56 +137,54 @@ function Overview() {
                           </CardBody>
                         </Card>
                       </Col>
-                    </Row>
-                    <Row className="justify-content-center text-center mt-3">
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-dark text-white h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#007bff")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>XII - CBSE Board</CardBody>
+                          <CardBody>XII - CBSE Board</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-success text-white h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#dc3545")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>KVPY Selections</CardBody>
+                          <CardBody>KVPY Selections</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-danger text-white h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#ffc107")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>NDA/NA Selections</CardBody>
+                          <CardBody>NDA/NA Selections</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-warning text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#17a2b8")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-2) Phase-2</CardBody>
+                          <CardBody>JEE-MAINS (P-2) Phase-2</CardBody>
                         </Card>
                       </Col>
-                      <Col xs={12} sm="6" md="2" lg="2" xl="2">
+                      <Col xs={12} sm="6" md="3" lg="3" xl="3">
                         <Card
-                          className={`bg-primary text-white text-center h6 mb-0`}
-                          style={cardStyles}
+                          className="text-center h6 mb-1 mt-1"
+                          style={cardStyles("#28a745")}
                           onMouseOver={onMouseOver}
                           onMouseOut={onMouseOut}
                         >
-                          <CardBody style={cardBodyStyles}>JEE-MAINS (P-2) Phase-1</CardBody>
+                          <CardBody>JEE-MAINS (P-2) Phase-1</CardBody>
                         </Card>
                       </Col>
                     </Row>

@@ -225,10 +225,10 @@ const StaffDailyAttendance = ({ staffData }) => {
     <Fragment>
       <Row className="mb-3 text-center align-items-center justify-content-center">
         {[
-          { id: "TotalStaff", text: "Total Staff", color: "primary" },
+          { id: "TotalStaff", text: "Total", color: "primary" },
           { id: "Present", text: "Present", color: "success" },
           { id: "Absent", text: "Absent", color: "danger" },
-          { id: "LateArrivals", text: "Late Arrivals", color: "warning" },
+          { id: "LateArrivals", text: "Late", color: "warning" },
           { id: "EarlyGo", text: "Early Go", color: "secondary" },
         ].map(({ id, text, color }) => (
           <Col md={1} key={id}>
@@ -256,7 +256,7 @@ const StaffDailyAttendance = ({ staffData }) => {
         <Col md={1} className="text-right">
           <span style={{ lineHeight: "38px", marginRight: "-70px" }}>Select Date:</span>
         </Col>
-        <Col md={1}>
+        <Col md={2}>
           <Flatpickr
             className="form-control"
             options={{
@@ -386,7 +386,13 @@ const StaffDailyAttendance = ({ staffData }) => {
         </div>
       </div>
       <div ref={printableTableRef} id="tbl1">
-        <Table bordered responsive hover striped className="align-items-center text-center">
+        <Table
+          bordered
+          responsive
+          hover
+          striped
+          className="align-items-center text-center justify-content-center font-small"
+        >
           <thead>
             <tr>
               <th>S.No</th>
@@ -444,8 +450,10 @@ const StaffDailyAttendance = ({ staffData }) => {
                   <td>{item.Dept}</td>
                   <td>{item.Desig}</td>
                   <td>{item.Subject}</td>
-                  <td>{`${item.ShiftIn} - ${item.ShiftOut}`}</td>
-                  <td className="text-danger small">{selectedAttendance.date}</td>
+                  <td style={{ width: "120px" }}>{`${item.ShiftIn} - ${item.ShiftOut}`}</td>
+                  <td className="text-danger small" style={{ width: "120px" }}>
+                    {selectedAttendance.date}
+                  </td>
                   <td className="table-warning">{inTime}</td>
                   <td className="table-warning">{outTime}</td>
                   <td className={remark === "Present" ? "text-success" : "text-danger"}>
