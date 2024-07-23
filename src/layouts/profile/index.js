@@ -2,6 +2,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import React, { Fragment } from "react";
 import { Badge, Card, CardBody, CardHeader, Col, Label, Row } from "reactstrap";
 import { Accordion } from "react-bootstrap";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const cardStyles = (color) => ({
   cursor: "pointer",
@@ -41,6 +42,7 @@ const linkMouseOut = (e) => {
 function Overview() {
   return (
     <DashboardLayout>
+      <DashboardNavbar />
       <Fragment>
         <Card>
           <CardHeader className="bg-secondary text-white">

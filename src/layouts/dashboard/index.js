@@ -409,7 +409,7 @@ const Dashboard = () => {
   return (
     <Fragment>
       <DashboardLayout>
-        {/* <DashboardNavbar /> */}
+        <DashboardNavbar />
         <MDBox py={3}>
           <Grid container spacing={3}>
             <Grid item xs={12} md={6} lg={3}>

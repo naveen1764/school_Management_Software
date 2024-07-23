@@ -2,10 +2,12 @@ import { useState } from "react";
 // Material Dashboard 2 React example components
 import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import { Badge, Button, ButtonGroup, Card, CardBody, Col, Row } from "reactstrap";
+import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 
 const Notifications = () => {
   return (
     <DashboardLayout>
+      <DashboardNavbar />
       <Card className="small">
         <CardBody className="">
           <div className="h5 mb-3">

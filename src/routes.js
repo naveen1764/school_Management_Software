@@ -40,9 +40,9 @@ const routes = [
   {
     type: "collapse",
     name: "Achievements",
-    key: "profile",
+    key: "achivements",
     icon: <Icon fontSize="small">person</Icon>,
-    route: "/profile",
+    route: "/achivements",
     component: <Profile />,
   },
   {
