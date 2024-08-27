@@ -236,20 +236,42 @@ const Dashboard = () => {
   });
 
   useEffect(() => {
-    axios
-      .get(`https://sheet.best/api/sheets/c1c3f9ec-bcf4-4f9e-bc53-22554e4adb66`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://script.google.com/macros/s/AKfycbx10sSGdCs37IKGBwV3jTUPFgGq-heQyxcwqrKeafQfb_odWRi-zl_z0FeTOQCBCusdYw/exec"
+        );
         setApiData(response.data);
-      });
-  }, [refresh]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
 
   useEffect(() => {
-    axios
-      .get(`https://sheet.best/api/sheets/6453ebd9-f54f-4e56-97eb-25a228f2629c`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://script.google.com/macros/s/AKfycbzpfHfzcs8VHTzdrffnaBz4qsQ9UyhpCTP1T6Qj8mU8TIcloNUn3ggp35aj-IB7gglz/exec"
+        );
         setStaffData(organizeStaffData(response.data));
-      });
-  }, [refresh]);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
+  }, []);
+
+  // useEffect(() => {
+  //   axios
+  //     .get(`https://sheet.best/api/sheets/6453ebd9-f54f-4e56-97eb-25a228f2629c`)
+  //     .then((response) => {
+  //       setStaffData(organizeStaffData(response.data));
+  //     });
+  // }, [refresh]);
 
   const organizeStaffData = (staffData) => {
     return staffData.map((staff) => {

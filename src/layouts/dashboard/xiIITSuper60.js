@@ -42,12 +42,27 @@ const XIIITSuper60 = ({ stuData }) => {
     { value: 20, label: "Latest 20 Weeks" },
   ];
 
+  // useEffect(() => {
+  //   axios
+  //     .get(`https://sheet.best/api/sheets/25cbcbf1-c2a1-44c7-8361-2cec8710557e`)
+  //     .then((response) => {
+  //       super60OrganizeData(response.data);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    axios
-      .get(`https://sheet.best/api/sheets/25cbcbf1-c2a1-44c7-8361-2cec8710557e`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://script.google.com/macros/s/AKfycby6w6QHOK5b1H0B4SjTMSG21XmNGMW8dY1HRnOOBApRt1nmPAT-NeM1Xs2EeIt5VtZ9Pw/exec"
+        );
         super60OrganizeData(response.data);
-      });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const super60OrganizeData = (data) => {
@@ -77,12 +92,12 @@ const XIIITSuper60 = ({ stuData }) => {
   };
 
   useEffect(() => {
-    if (stuData.length > 0) {
-      const filteredData = organizedData.filter((student) =>
-        stuData.some((stu) => stu.RollNo === student.RollNo)
-      );
-      setFinalData(filteredData);
-    }
+    // if (stuData.length > 0) {
+    const filteredData = organizedData.filter((student) =>
+      stuData.some((stu) => stu.RollNo === student.RollNo)
+    );
+    setFinalData(filteredData);
+    // }
   }, [stuData, organizedData]);
 
   useEffect(() => {
