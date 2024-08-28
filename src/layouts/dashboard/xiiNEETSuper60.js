@@ -43,12 +43,27 @@ const XIINEETSuper60 = ({ stuData }) => {
     { value: 20, label: "Latest 20 Weeks" },
   ];
 
+  // useEffect(() => {
+  //   axios
+  //     .get(`https://sheet.best/api/sheets/2be7d610-9c2b-4a1a-a9ea-bddd5be4a6fa`)
+  //     .then((response) => {
+  //       super60OrganizeData(response.data);
+  //     });
+  // }, []);
+
   useEffect(() => {
-    axios
-      .get(`https://sheet.best/api/sheets/2be7d610-9c2b-4a1a-a9ea-bddd5be4a6fa`)
-      .then((response) => {
+    const fetchData = async () => {
+      try {
+        const response = await axios.get(
+          "https://script.google.com/macros/s/AKfycbw0XwdbqWH5y7OsDnofZ3ESM-WcN64yfdBukdS9qslF-CzO034_yOgtg4pZdNa94c7K/exec"
+        );
         super60OrganizeData(response.data);
-      });
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
   const super60OrganizeData = (data) => {

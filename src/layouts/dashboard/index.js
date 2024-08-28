@@ -900,7 +900,7 @@ const Dashboard = () => {
                     <th>Group</th>
                     <th>Mobile No</th>
                     <th>Email ID</th>
-                    <th>Action</th>
+                    {/* <th>Action</th> */}
                   </tr>
                 </thead>
                 <tbody>
@@ -922,7 +922,7 @@ const Dashboard = () => {
                       <td style={{}}>
                         {student.Email_ID1} <br /> {student.Email_ID2}
                       </td>
-                      <td
+                      {/* <td
                         onClick={() => handleStuEdit(index + 1, student, student.Sno)}
                         style={{
                           textDecoration: isHovered ? "underline" : "none",
@@ -930,7 +930,7 @@ const Dashboard = () => {
                         }}
                       >
                         <Edit size={16} />{" "}
-                      </td>
+                      </td> */}
                     </tr>
                   ))}
                 </tbody>
